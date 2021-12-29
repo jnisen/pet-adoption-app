@@ -11,7 +11,8 @@ export class User {
     bio: string;
     role: string;
     savedPets: Array<Pet>;
-    adoptedFosterPets: Array<Pet>;
+    adoptedFosterPets: Array<Pet>
+    lastLoginAt: Date
 
     constructor(firstName: string, lastName: string, email: string, password: string, confirmPassword: string, phoneNumber: string) {
         this.firstName = firstName
@@ -24,20 +25,18 @@ export class User {
 }
 
 export class Users {
-    users: Array<User>
 
     async addUser(newUser: User) {
         try {
-            console.log(newUser)
             return await UserDB.create(newUser)
         } catch (e) {
             console.log(e.message)
         }
     }
 
-    async getUserById(id: string) {
+    async getUserPetsById(id: string) {
         try {
-            const findUser = await UserDB.findById(`${id}`, { _id: 0, createdDate: 0, __v: 0, password: 0, confirmPassword: 0, role: 0 });
+            const findUser = await UserDB.findById(`${id}`, { _id: 0, createdDate: 0, __v: 0, role: 0 });
             const adoptedFosterpets = await petDB.find({ _id: { $in: findUser.adoptedFosterPets } })
             const savedPets = await petDB.find({ _id: { $in: findUser.savedPets } })
             const userAndPets = {
@@ -46,6 +45,15 @@ export class Users {
                 savedPets: savedPets
             }
             return userAndPets
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    async getUserByID(id: string) {
+        try {
+            const findUser = await UserDB.findById(`${id}`, { _id: 0, createdDate: 0, __v: 0, role: 0 });
+            return findUser
         } catch (e) {
             console.log(e)
         }
@@ -75,6 +83,15 @@ export class Users {
             console.log(e)
         }
     }
+
+    async userToAdmin(id: string) {
+        try {
+            return await UserDB.findByIdAndUpdate(`${id}`, { $unset: { savedPets: "", adoptedFosterPets: "" } }, { upsert: true, new: true })
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
 
     async getUser(id: string) {
         const findUser = await UserDB.findById(`${id}`, { firstName: 1, lastName: 1, _id: 1, role: 1 })

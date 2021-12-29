@@ -1,34 +1,38 @@
-
+//React
 import { useParams, useNavigate } from 'react-router-dom'
-import { useState, useEffect, useContext } from 'react'
-import clientAxios from '../config/axios'
-import swal from 'sweetalert'
+import { useEffect, useContext } from 'react'
+import { petAdoptionContext } from '../content/petAdoptionContext';
 
+//Material Ui
 import CardMedia from '@mui/material/CardMedia';
 import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
 import Chip from '@mui/material/Chip';
 import Button from '@mui/material/Button';
 
-import { petAdoptionContext } from '../content/petAdoptionContext';
+//Swal
+import swal from 'sweetalert'
+
+//Axios
+import clientAxios from '../config/axios'
 
 
 export default function PetDetails() {
 
-    const { id } = useParams();
-
-    const { pets, back, setPets, signUp, setSignUp, petDetail, setPetDetail, currentUser } = useContext(petAdoptionContext)
     let navigate = useNavigate();
 
-    useEffect(() => {
+    const { id } = useParams();
 
+    const { setPets, signUp, setSignUp, petDetail, setPetDetail, currentUser } = useContext(petAdoptionContext)
+
+    useEffect(() => {
         async function getPet() {
             const response = await clientAxios.get(`/pets/getPet/${id}`, { withCredentials: true })
             setPetDetail(response.data)
         }
         getPet()
-
-    }, [pets])
+        // eslint-disable-next-line
+    }, [])
 
     async function handleAdopt() {
         const obj = {
@@ -42,17 +46,22 @@ export default function PetDetails() {
                 icon: "success",
                 button: "Ok",
             });
+
+            setPetDetail(response.data.pets.filter(pet => pet._id === id)[0])
             setPets(response.data.pets)
             setSignUp(response.data.user)
+
         } catch (e) {
-            console.log(e.message)
+            swal({
+                title: `${e.response.data}`,
+                icon: "error",
+                button: "Ok",
+            });
         }
     }
 
     async function handleFoster() {
-        const obj = {
-            status: 'Foster',
-        }
+        const obj = { status: 'Foster' }
 
         try {
             const response = await clientAxios.post(`/pets/adoptfoster/${id}`, obj, { withCredentials: true })
@@ -61,39 +70,63 @@ export default function PetDetails() {
                 icon: "success",
                 button: "Ok",
             });
+
+            setPetDetail(response.data.pets.filter(pet => pet._id === id)[0])
             setPets(response.data.pets)
             setSignUp(response.data.user)
+
         } catch (e) {
-            console.log(e.message)
+
+            swal({
+                title: `${e.response.data}`,
+                icon: "error",
+                button: "Ok",
+            });
         }
     }
 
     async function handleReturn() {
         try {
             const response = await clientAxios.post(`/pets/returnPet/${id}`, {}, { withCredentials: true })
+
             swal({
                 title: `${response.data.message}`,
                 icon: "success",
                 button: "Ok",
             });
+
+            setPetDetail(response.data.pets.filter(pet => pet._id === id)[0])
             setPets(response.data.pets)
             setSignUp(response.data.user)
+
         } catch (e) {
-            console.log(e.message)
+            swal({
+                title: `${e.response.data}`,
+                icon: "error",
+                button: "Ok",
+            });
         }
     }
 
     async function handleSaveForLater() {
         try {
+
             const response = await clientAxios.post(`/pets/savedPet/${id}`, {}, { withCredentials: true })
+
             swal({
                 title: `${response.data.message}`,
                 icon: "success",
                 button: "Ok",
             });
+
             setSignUp(response.data.user)
+
         } catch (e) {
-            console.log(e.response)
+            swal({
+                title: `${e.response.data}`,
+                icon: "error",
+                button: "Ok",
+            });
         }
     }
 
@@ -105,9 +138,16 @@ export default function PetDetails() {
                 icon: "success",
                 button: "Ok",
             });
+
             setSignUp(response.data.user)
+
         } catch (e) {
-            console.log(e.response)
+
+            swal({
+                title: `${e.response.data}`,
+                icon: "error",
+                button: "Ok",
+            });
         }
     }
 
@@ -117,7 +157,6 @@ export default function PetDetails() {
 
 
     return (
-
         <div className="pet-detail">
             <div className="pet-detail-up">
                 <Card sx={{ maxWidth: 250, backgroundColor: "#1E1E1E" }} className="pet-detail-img">
@@ -161,22 +200,22 @@ export default function PetDetails() {
                 </div>
             </div>
             <div className="pet-details-actions">
-                <Button variant="contained" color="primary" size="small" className="btn-back" onClick={() => navigate(`${back}`)}>Back</Button>
+                <Button variant="contained" color="primary" size="small" className="btn-back" onClick={() => navigate(-1)}>Back</Button>
 
                 {currentUser.role === 'public' ?
                     <>
 
-                        {pets.filter(pet => pet._id === id)[0].status === 'Available' ?
+                        {petDetail.status === 'Available' ?
                             <>
                                 <Button variant="contained" color="success" size="small" className="btn-adopt" onClick={handleAdopt}>Adopt</Button>
                                 <Button variant="contained" color="success" size="small" className="btn-foster" onClick={handleFoster}>Foster</Button>
                             </> : null
                         }
-                        {pets.filter(pet => pet._id === id)[0].status === 'Foster' && signUp.adoptedFosterPets.includes(id) ?
+                        {petDetail.status === 'Foster' && signUp.adoptedFosterPets.includes(id) ?
                             <Button variant="contained" color="success" size="small" className="btn-adopt" onClick={handleAdopt}>Adopt</Button>
                             : null
                         }
-                        {pets.filter(pet => pet._id === id)[0].status === 'Adopted' && signUp.adoptedFosterPets.includes(id) ?
+                        {petDetail.status === 'Adopted' && signUp.adoptedFosterPets.includes(id) ?
                             < Button variant="contained" color="warning" size="small" className="btn-foster" onClick={handleReturn}>Return</Button>
                             : null
                         }
@@ -187,10 +226,14 @@ export default function PetDetails() {
                             < Button variant="contained" color="warning" size="small" className="btn-foster" onClick={handleUnSaveForLater}>Unsave Pet</Button>
                         }
 
-                    </> : <Button variant="contained" color="success" size="small" className="btn-foster" onClick={handleToEdit}>To Edit</Button>
+                    </> :
+                    <>
+                        {petDetail.status === 'Available' ?
+                            < Button variant="contained" color="success" size="small" className="btn-foster" onClick={handleToEdit}>To Edit</Button>
+                            : null
+                        }
+                    </>
                 }
-
-
             </div>
         </div >
     )

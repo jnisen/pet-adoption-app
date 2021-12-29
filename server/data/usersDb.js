@@ -61,7 +61,6 @@ var Users = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        console.log(newUser);
                         return [4 /*yield*/, UserDB.create(newUser)];
                     case 1: return [2 /*return*/, _a.sent()];
                     case 2:
@@ -73,14 +72,14 @@ var Users = /** @class */ (function () {
             });
         });
     };
-    Users.prototype.getUserById = function (id) {
+    Users.prototype.getUserPetsById = function (id) {
         return __awaiter(this, void 0, void 0, function () {
             var findUser, adoptedFosterpets, savedPets, userAndPets, e_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 4, , 5]);
-                        return [4 /*yield*/, UserDB.findById("" + id, { _id: 0, createdDate: 0, __v: 0, password: 0, confirmPassword: 0, role: 0 })];
+                        return [4 /*yield*/, UserDB.findById("" + id, { _id: 0, createdDate: 0, __v: 0, role: 0 })];
                     case 1:
                         findUser = _a.sent();
                         return [4 /*yield*/, petDB.find({ _id: { $in: findUser.adoptedFosterPets } })];
@@ -104,15 +103,17 @@ var Users = /** @class */ (function () {
             });
         });
     };
-    Users.prototype.readUsers = function () {
+    Users.prototype.getUserByID = function (id) {
         return __awaiter(this, void 0, void 0, function () {
-            var e_3;
+            var findUser, e_3;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, UserDB.find({}, { password: 0, confirmPassword: 0, createdDate: 0, __v: 0 })];
-                    case 1: return [2 /*return*/, _a.sent()];
+                        return [4 /*yield*/, UserDB.findById("" + id, { _id: 0, createdDate: 0, __v: 0, role: 0 })];
+                    case 1:
+                        findUser = _a.sent();
+                        return [2 /*return*/, findUser];
                     case 2:
                         e_3 = _a.sent();
                         console.log(e_3);
@@ -122,17 +123,15 @@ var Users = /** @class */ (function () {
             });
         });
     };
-    Users.prototype.findUserByEmail = function (email) {
+    Users.prototype.readUsers = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var findUser, e_4;
+            var e_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, UserDB.findOne({ email: email })];
-                    case 1:
-                        findUser = _a.sent();
-                        return [2 /*return*/, findUser];
+                        return [4 /*yield*/, UserDB.find({}, { password: 0, confirmPassword: 0, createdDate: 0, __v: 0 })];
+                    case 1: return [2 /*return*/, _a.sent()];
                     case 2:
                         e_4 = _a.sent();
                         console.log(e_4);
@@ -142,9 +141,29 @@ var Users = /** @class */ (function () {
             });
         });
     };
+    Users.prototype.findUserByEmail = function (email) {
+        return __awaiter(this, void 0, void 0, function () {
+            var findUser, e_5;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, UserDB.findOne({ email: email })];
+                    case 1:
+                        findUser = _a.sent();
+                        return [2 /*return*/, findUser];
+                    case 2:
+                        e_5 = _a.sent();
+                        console.log(e_5);
+                        return [3 /*break*/, 3];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
     Users.prototype.updateUser = function (id, updateUser) {
         return __awaiter(this, void 0, void 0, function () {
-            var e_5;
+            var e_6;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -152,8 +171,26 @@ var Users = /** @class */ (function () {
                         return [4 /*yield*/, UserDB.findByIdAndUpdate("" + id, updateUser, { upsert: true, "new": true })];
                     case 1: return [2 /*return*/, _a.sent()];
                     case 2:
-                        e_5 = _a.sent();
-                        console.log(e_5);
+                        e_6 = _a.sent();
+                        console.log(e_6);
+                        return [3 /*break*/, 3];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    Users.prototype.userToAdmin = function (id) {
+        return __awaiter(this, void 0, void 0, function () {
+            var e_7;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, UserDB.findByIdAndUpdate("" + id, { $unset: { savedPets: "", adoptedFosterPets: "" } }, { upsert: true, "new": true })];
+                    case 1: return [2 /*return*/, _a.sent()];
+                    case 2:
+                        e_7 = _a.sent();
+                        console.log(e_7);
                         return [3 /*break*/, 3];
                     case 3: return [2 /*return*/];
                 }

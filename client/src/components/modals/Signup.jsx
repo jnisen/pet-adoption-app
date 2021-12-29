@@ -1,17 +1,19 @@
-import React from 'react'
+//React
 import { useState, useContext } from 'react'
+import { petAdoptionContext } from '../../content/petAdoptionContext';
 
+//Material UI
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-
 import MuiPhoneNumber from 'material-ui-phone-number';
-import { petAdoptionContext } from '../../content/petAdoptionContext';
 
+//Axios
 import clientAxios from '../../config/axios'
 
+//Swal
 import swal from 'sweetalert'
 
 
@@ -73,12 +75,11 @@ export default function Signup() {
         try {
             const response = await clientAxios.post('/users/signup', signUpObj)
 
-
             if (response.data) {
                 swal({
                     title: `${response.data}`,
                     icon: "success",
-                    button: "Aww yiss!",
+                    button: "Ok",
                 });
                 setSignUpModal(false)
             }
@@ -112,12 +113,7 @@ export default function Signup() {
                     button: "Ok",
                 });
             }
-
-
         }
-
-
-
     }
 
     function handleChange(e) {
@@ -138,7 +134,6 @@ export default function Signup() {
         setSignUpModal(false)
         setLoginModal(true)
     }
-
 
     return (
         <Box
@@ -162,6 +157,7 @@ export default function Signup() {
                         onChange={handleChange}
                         value={signUp.firstName}
                         error={errFirstNameSignUp}
+                        helperText="Enter your first name"
                     />
                 </Grid>
                 <Grid item xs={12} sm={12} md={6} align="center">
@@ -174,6 +170,7 @@ export default function Signup() {
                         onChange={handleChange}
                         value={signUp.lastName}
                         error={errLastNameSignUp}
+                        helperText="Enter your last name"
                     />
                 </Grid>
                 <Grid item xs={12} sm={12} md={6} align="center">
@@ -186,6 +183,7 @@ export default function Signup() {
                         onChange={handleChange}
                         error={errEmailSignUp}
                         value={signUp.email}
+                        helperText="Enter your a valid email"
                     />
                 </Grid>
                 <Grid item xs={12} sm={12} md={6} align="center">
@@ -197,6 +195,7 @@ export default function Signup() {
                         error={errPhoneNumber}
                         value={phone.phoneNumber}
                         required
+                        helperText="Enter your your phone"
                     />
                 </Grid>
                 <Grid item xs={12} sm={12} md={6} align="center">
@@ -210,6 +209,7 @@ export default function Signup() {
                         onChange={handleChange}
                         error={errPassSignUp}
                         value={signUp.password}
+                        helperText="Enter a password (*)"
                     />
                 </Grid>
                 <Grid item xs={12} sm={12} md={6} align="center">
@@ -224,9 +224,11 @@ export default function Signup() {
                         onChange={handleChange}
                         error={errConfirmPassSignUp}
                         value={signUp.confirmPassword}
+                        helperText="Confirm password"
                     />
                 </Grid>
             </Grid>
+            <small align="center">(*) Password must contain at least one upper case, one lower case, one digit and at least 6 characters long</small>
             <div className="form-signup">
                 <div className="form-login-action">
                     <Button type="submit" color="secondary" variant="contained" size="small" sx={{ m: 1 }}>Sign Up</Button>

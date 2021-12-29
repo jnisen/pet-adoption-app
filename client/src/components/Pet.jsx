@@ -1,3 +1,7 @@
+//React
+import { Link } from "react-router-dom";
+
+//Material Ui
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
@@ -6,13 +10,7 @@ import CardActions from '@mui/material/CardActions';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 
-
-import { Link } from "react-router-dom";
-
-
 export default function Pet({ pet }) {
-
-
 
     return (
         <Card sx={{ maxWidth: 250, backgroundColor: "#1E1E1E" }}>
@@ -36,6 +34,5 @@ export default function Pet({ pet }) {
                 <Link to={`/petdetail/pet/${pet._id}`}><Button size="small" color="secondary">See More</Button></Link>
             </CardActions>
         </Card>
-
     )
 }

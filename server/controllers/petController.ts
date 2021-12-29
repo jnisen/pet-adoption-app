@@ -13,7 +13,9 @@ export async function addPets(req, res) {
         const picture = result.secure_url
         const cid = result.public_id
 
-        const pet = new Pet(type, name, picture, height, weight, color, bio, hypoallergenic, dietaryRestriction, breed, cid)
+        const hypoBoolean: boolean = hypoallergenic === 'Yes' ? true : false
+
+        const pet = new Pet(type, name, picture, height, weight, color, bio, hypoBoolean, dietaryRestriction, breed, cid)
 
         await pets.addPet(pet)
 
@@ -56,8 +58,14 @@ export async function updatePet(req, res) {
     try {
         const { id } = req.params
         let pet = await pets.findPetById(id)
-        await cloudinary.uploader.destroy(pet.cloudinary_id)
-        const result = await cloudinary.uploader.upload(req.file.path);
+
+        if (req.file) {
+            await cloudinary.uploader.destroy(pet.cloudinary_id)
+            const result = await cloudinary.uploader.upload(req.file.path);
+            pet.picture = result.secure_url
+            pet.cid = result.public_id
+        }
+
         const { type, name, height, weight, color, bio, hypoallergenic, dietaryRestriction, breed } = req.body
 
         pet.name = name
@@ -65,13 +73,12 @@ export async function updatePet(req, res) {
         pet.type = type
         pet.weight = weight
         pet.breed = breed
-        pet.hypoallergenic = hypoallergenic
+        pet.hypoallergenic = hypoallergenic === 'Yes' ? true : false
         pet.dietaryRestriction = dietaryRestriction
         pet.breed = breed
         pet.height = height
         pet.bio = bio
-        pet.picture = result.secure_url
-        pet.cid = result.public_id
+
 
         const petUpdate = await pets.updatePet(id, pet)
         res.send({ pet: petUpdate, message: 'Update Pet' })
@@ -95,7 +102,6 @@ export async function returnPet(req, res) {
     try {
         const { id } = req.params
         const obj = await pets.returnPet(id, req.user.userID)
-        console.log(obj.pets)
         res.send({ user: obj.user, pets: obj.pets, message: 'return pet' })
     } catch (e) {
         res.send(400).message(`${e}`)

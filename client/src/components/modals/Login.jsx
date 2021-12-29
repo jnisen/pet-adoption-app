@@ -1,30 +1,29 @@
+//React
 import { useState, useContext } from 'react'
+import { useNavigate } from "react-router-dom";
+import { petAdoptionContext } from '../../content/petAdoptionContext';
 
+//Material Ui
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 
-import { petAdoptionContext } from '../../content/petAdoptionContext';
+//Swal
 import swal from 'sweetalert'
-import clientAxios from '../../config/axios'
 
-import { useNavigate } from "react-router-dom";
+//Axios
+import clientAxios from '../../config/axios'
 
 export default function Login() {
 
-    const { loginModal, setLoginModal, setSignUpModal, setCurrentUser, setSignUp} = useContext(petAdoptionContext)
+    let navigate = useNavigate();
+
+    const { loginModal, setLoginModal, setSignUpModal, setCurrentUser } = useContext(petAdoptionContext)
 
     const [errEmailLogin, setErrEmailLogin] = useState(false)
     const [errPassLogin, setErrPassLogin] = useState(false)
-
-    const [login, setLogin] = useState({
-        email: '',
-        password: ''
-    })
-
-    let navigate = useNavigate();
-
+    const [login, setLogin] = useState({ email: '', password: '' })
 
     const handleLogin = async ev => {
         ev.preventDefault();
@@ -32,8 +31,15 @@ export default function Login() {
         setErrEmailLogin(false);
         setErrPassLogin(false);
 
-        if (login.email === '') setErrEmailLogin(true)
-        if (login.password === '') setErrPassLogin(true)
+        if (login.email === '') {
+            setErrEmailLogin(true)
+            return
+        }
+        
+        if (login.password === '') {
+            setErrPassLogin(true)
+            return
+        }
 
         try {
             const response = await clientAxios.post('/users/login', login, { withCredentials: true })
@@ -42,7 +48,7 @@ export default function Login() {
                 setLoginModal(false)
                 navigate('/home')
             }
-          
+
         } catch (e) {
 
             if (typeof e.response.data === 'object') {
@@ -61,15 +67,12 @@ export default function Login() {
             }
         }
 
-        //setLogin('')
+        setLogin({ email: '', password: '' })
     }
 
     function handleChange(e) {
         const value = e.target.value
-        setLogin({
-            ...login,
-            [e.target.name]: value
-        })
+        setLogin({ ...login, [e.target.name]: value })
     }
 
     function handleSignUp() {
@@ -98,6 +101,7 @@ export default function Login() {
                     size="small"
                     onChange={handleChange}
                     error={errEmailLogin}
+                    helperText="Enter an email"
                 />
                 <TextField
                     id="outlined-password-input"
@@ -108,9 +112,9 @@ export default function Login() {
                     required
                     onChange={handleChange}
                     error={errPassLogin}
+                    helperText="Enter a password"
                 />
                 <div className="form-login-action">
-
                     <Button type="submit" color="secondary" variant="contained" size="small" sx={{ m: 1 }}>Login</Button>
                     <Button type="submit" color="secondary" variant="contained" size="small" onClick={() => setLoginModal(!loginModal)}>Cancel</Button>
                 </div>

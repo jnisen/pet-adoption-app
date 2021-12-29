@@ -42,7 +42,7 @@ var pets = new petsDb_1.Pets();
 var cloudinary = require('../config/cloudinary');
 function addPets(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var result, _a, type, name, height, weight, color, bio, hypoallergenic, dietaryRestriction, breed, picture, cid, pet, e_1;
+        var result, _a, type, name, height, weight, color, bio, hypoallergenic, dietaryRestriction, breed, picture, cid, hypoBoolean, pet, e_1;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
@@ -53,7 +53,8 @@ function addPets(req, res) {
                     _a = req.body, type = _a.type, name = _a.name, height = _a.height, weight = _a.weight, color = _a.color, bio = _a.bio, hypoallergenic = _a.hypoallergenic, dietaryRestriction = _a.dietaryRestriction, breed = _a.breed;
                     picture = result.secure_url;
                     cid = result.public_id;
-                    pet = new petsDb_1.Pet(type, name, picture, height, weight, color, bio, hypoallergenic, dietaryRestriction, breed, cid);
+                    hypoBoolean = hypoallergenic === 'Yes' ? true : false;
+                    pet = new petsDb_1.Pet(type, name, picture, height, weight, color, bio, hypoBoolean, dietaryRestriction, breed, cid);
                     return [4 /*yield*/, pets.addPet(pet)];
                 case 2:
                     _b.sent();
@@ -142,40 +143,43 @@ function updatePet(req, res) {
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    _b.trys.push([0, 5, , 6]);
+                    _b.trys.push([0, 6, , 7]);
                     id = req.params.id;
                     return [4 /*yield*/, pets.findPetById(id)];
                 case 1:
                     pet = _b.sent();
+                    if (!req.file) return [3 /*break*/, 4];
                     return [4 /*yield*/, cloudinary.uploader.destroy(pet.cloudinary_id)];
                 case 2:
                     _b.sent();
                     return [4 /*yield*/, cloudinary.uploader.upload(req.file.path)];
                 case 3:
                     result = _b.sent();
+                    pet.picture = result.secure_url;
+                    pet.cid = result.public_id;
+                    _b.label = 4;
+                case 4:
                     _a = req.body, type = _a.type, name = _a.name, height = _a.height, weight = _a.weight, color = _a.color, bio = _a.bio, hypoallergenic = _a.hypoallergenic, dietaryRestriction = _a.dietaryRestriction, breed = _a.breed;
                     pet.name = name;
                     pet.color = color;
                     pet.type = type;
                     pet.weight = weight;
                     pet.breed = breed;
-                    pet.hypoallergenic = hypoallergenic;
+                    pet.hypoallergenic = hypoallergenic === 'Yes' ? true : false;
                     pet.dietaryRestriction = dietaryRestriction;
                     pet.breed = breed;
                     pet.height = height;
                     pet.bio = bio;
-                    pet.picture = result.secure_url;
-                    pet.cid = result.public_id;
                     return [4 /*yield*/, pets.updatePet(id, pet)];
-                case 4:
+                case 5:
                     petUpdate = _b.sent();
                     res.send({ pet: petUpdate, message: 'Update Pet' });
-                    return [3 /*break*/, 6];
-                case 5:
+                    return [3 /*break*/, 7];
+                case 6:
                     e_5 = _b.sent();
                     res.status(404).send(e_5.message);
-                    return [3 /*break*/, 6];
-                case 6: return [2 /*return*/];
+                    return [3 /*break*/, 7];
+                case 7: return [2 /*return*/];
             }
         });
     });
@@ -216,7 +220,6 @@ function returnPet(req, res) {
                     return [4 /*yield*/, pets.returnPet(id, req.user.userID)];
                 case 1:
                     obj = _a.sent();
-                    console.log(obj.pets);
                     res.send({ user: obj.user, pets: obj.pets, message: 'return pet' });
                     return [3 /*break*/, 3];
                 case 2:

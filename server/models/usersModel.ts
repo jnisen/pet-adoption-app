@@ -54,8 +54,8 @@ export const usuarioSchema = mongoose.Schema({
         type: [String],
         trim: true,
         default: undefined
-     },
-     
+    },
+
 }, { timestamps: true })
 
 

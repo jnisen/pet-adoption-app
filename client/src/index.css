@@ -78,7 +78,6 @@ code {
 
 .form-personal {
   display: flex;
-  /* flex-direction: column; */
   justify-content: space-around;
 }
 
@@ -191,6 +190,7 @@ code {
   padding: 4rem;
   gap: 1rem;
   display: flex;
+  justify-content: center;
 }
 
 .imagepet {
@@ -208,7 +208,7 @@ code {
 }
 
 .tableheaderPets {
-  background-color:lightblue;
+  background-color: lightblue;
 }
 
 .userpets {
@@ -217,15 +217,71 @@ code {
   flex-direction: column;
 }
 
-.user-info{
+.user-info {
   display: flex;
   justify-content: center;
-  gap:1.2rem;
+  gap: 1.2rem;
 }
 
-.user-personal, .user-contact{
+.user-personal,
+.user-contact {
   display: flex;
   flex-direction: column;
-  gap:1rem;
+  gap: 1rem;
 }
 
+.loadingPage {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.table-red {
+  background-color: lightcoral;
+  cursor: pointer;
+}
+
+.table-green {
+  background-color: lightgreen;
+  cursor: pointer;
+}
+
+.center_progress {
+  display: grid;
+  place-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.loadingPageSearchBasic {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-56%, 0%);
+}
+
+.loadingPageSearchAdvanced {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, 250%);
+}
+
+@media screen and (max-width: 600px) {
+  
+  .pet-detail-up{
+    margin-left: 1.5px;
+  }
+  .container-add{
+    display: flex;
+    flex-direction: column;
+  }
+
+  .container-add-items{
+   grid-template-columns: 1fr;
+  }
+
+  .container-btn-add{
+    margin-top: 12rem;
+  }
+}

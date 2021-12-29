@@ -1,29 +1,30 @@
+//React
 import { useState, createRef, useEffect, useContext } from 'react'
+import { useNavigate } from "react-router-dom";
+import { petAdoptionContext } from '../content/petAdoptionContext';
 
+//Material Ui
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import swal from 'sweetalert'
-import clientAxios from '../config/axios'
 import MenuItem from '@mui/material/MenuItem';
 import Box from '@mui/material/Box';
+import petsArray from '../data/petsArray'
+import hypo from '../data/hypoArray'
 
-import { petAdoptionContext } from '../content/petAdoptionContext';
+//Swal
+import swal from 'sweetalert'
 
-const petsArray = [
-    'Dog',
-    'Cat',
-    'Bird'
-]
-
-const hypo = [
-    'Yes',
-    'No'
-]
+//axios
+import clientAxios from '../config/axios'
 
 export default function AddPet() {
 
+    let navigate = useNavigate();
+
     const { pets, setPets } = useContext(petAdoptionContext)
+
+    const fileInputRef = createRef()
 
     const [infoPet, setInfoPet] = useState({
         name: '',
@@ -54,8 +55,17 @@ export default function AddPet() {
 
     }, [file])
 
-
-    const fileInputRef = createRef()
+    useEffect(() => {
+        async function getRole() {
+            const responseAuth = await clientAxios.get('/users/authUser', { withCredentials: true })
+            if (responseAuth.data.role !== 'admin') {
+                alert('You arent an Admin, not allowed to access this page')
+                navigate('/home')
+            }
+        }
+        getRole()
+          // eslint-disable-next-line
+    }, [])
 
     function handleChange(e) {
         const value = e.target.value
@@ -68,17 +78,25 @@ export default function AddPet() {
     async function handleAddPet(e) {
         e.preventDefault()
 
+        if (!file) {
+            swal({
+                title: 'No image uploaded',
+                icon: "error",
+                button: "Ok",
+            });
+            return
+        }
+
+
         const data = new FormData()
         data.append('image', file)
-        data.append('name', infoPet.name.toLowerCase())
+        data.append('name', infoPet.name)
         data.append('height', infoPet.height)
         data.append('weight', infoPet.weight)
         data.append('color', infoPet.color)
         data.append('bio', infoPet.bio)
         data.append('dietaryRestriction', infoPet.dietaryRestriction)
         data.append('breed', infoPet.breed)
-        if (hypoallergenic === 'Yes') hypoallergenic = true
-        else hypoallergenic = false
         data.append('hypoallergenic', hypoallergenic)
         data.append('type', type)
 
@@ -101,11 +119,31 @@ export default function AddPet() {
             const newPet = [...pets, obj]
 
             setPets(newPet)
+
+            setInfoPet({
+                name: '',
+                height: '',
+                weight: '',
+                color: '',
+                bio: '',
+                dietaryRestriction: '',
+                breed: ''
+            })
+
+            setType([])
+            setHypoallergenic([])
+            setPreview('https://www.pawtree.com/Content/images/dog-profile-icon.jpg')
+
+
         } catch (e) {
-            console.log(e.response)
+            const { msg } = e.response.data.errors[0]
+            swal({
+                title: `${msg}`,
+                icon: "error",
+                button: "Ok",
+            });
         }
     }
-
 
     return (
         <div>
@@ -163,10 +201,7 @@ export default function AddPet() {
                             onChange={handleChange}
                             value={infoPet.name}
                             sx={{ width: 150 }}
-                        // error={errFirstNameSignUp}
                         />
-
-                        {/* https://www.youtube.com/watch?v=BPUgM1Ig4Po */}
                         <TextField
                             required
                             name='height'
@@ -178,9 +213,7 @@ export default function AddPet() {
                             onChange={handleChange}
                             value={infoPet.height}
                             sx={{ width: 150 }}
-                        // error={errFirstNameSignUp}
                         />
-
                         <TextField
                             required
                             name='weight'
@@ -192,9 +225,7 @@ export default function AddPet() {
                             onChange={handleChange}
                             value={infoPet.weight}
                             sx={{ width: 150 }}
-                        // error={errFirstNameSignUp}
                         />
-
                         <TextField
                             required
                             name='color'
@@ -205,9 +236,7 @@ export default function AddPet() {
                             onChange={handleChange}
                             value={infoPet.color}
                             sx={{ width: 150 }}
-                        // error={errFirstNameSignUp}
                         />
-
                         <TextField
                             required
                             name='bio'
@@ -218,9 +247,7 @@ export default function AddPet() {
                             onChange={handleChange}
                             value={infoPet.bio}
                             sx={{ width: 150 }}
-                        // error={errFirstNameSignUp}
                         />
-
                         <TextField
                             variant="standard"
                             size="small"
@@ -233,15 +260,14 @@ export default function AddPet() {
                             <MenuItem value="">
                                 <em>None</em>
                             </MenuItem>
-                            {hypo.map((h) => (
+                            {hypo.map((hypoallergenic) => (
                                 <MenuItem
-                                    key={h}
-                                    value={h}
+                                    key={hypoallergenic}
+                                    value={hypoallergenic}
                                 >
-                                    {h}
+                                    {hypoallergenic}
                                 </MenuItem>))}
                         </TextField>
-
                         <TextField
                             required
                             name='dietaryRestriction'
@@ -252,10 +278,7 @@ export default function AddPet() {
                             variant="standard"
                             onChange={handleChange}
                             value={infoPet.dietaryRestriction}
-                        // error={errFirstNameSignUp}
                         />
-
-
                         <TextField
                             required
                             name='breed'
@@ -267,12 +290,11 @@ export default function AddPet() {
                             onChange={handleChange}
                             value={infoPet.breed}
                             sx={{ width: 150 }}
-                        // error={errFirstNameSignUp}
                         />
                     </div>
                 </div>
                 <div className="container-btn-add">
-                    <Button type="submit" variant="contained" align="center" size="small" sx={{ background: '#6A4770' }}>Sumbit</Button>
+                    <Button type="submit" variant="contained" align="center" size="small" sx={{ background: '#6A4770' }}>Add Pet</Button>
                 </div>
             </Box>
         </div >

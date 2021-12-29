@@ -1,23 +1,30 @@
-import React from 'react'
-import { useParams } from 'react-router-dom'
+//React
 import { useState, createRef, useContext, useEffect } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
 import { petAdoptionContext } from '../content/petAdoptionContext';
 
+//Material Ui
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import swal from 'sweetalert'
-import clientAxios from '../config/axios'
 import MenuItem from '@mui/material/MenuItem';
 import Box from '@mui/material/Box';
+import petsArray from '../data/petsArray'
+import hypo from '../data/hypoArray'
 
-const petsArray = ['Dog', 'Cat', 'Bird']
+//Swal
+import swal from 'sweetalert'
 
-const hypo = ['Yes', 'No']
+//Axios
+import clientAxios from '../config/axios'
+
 
 export default function EditPet() {
 
+    let navigate = useNavigate();
+
     const { id } = useParams();
+
     const { petDetail, setPetDetail } = useContext(petAdoptionContext)
 
     const [infoPet, setInfoPet] = useState({
@@ -31,8 +38,7 @@ export default function EditPet() {
     })
 
     const [type, setType] = useState(petDetail.type)
-    let [hypoallergenic, setHypoallergenic] = useState(
-        petDetail.hypoallergenic ? 'Yes' : "No")
+    let [hypoallergenic, setHypoallergenic] = useState(petDetail.hypoallergenic ? 'Yes' : "No")
     const [preview, setPreview] = useState()
     const [file, setFile] = useState()
     const fileInputRef = createRef()
@@ -47,7 +53,7 @@ export default function EditPet() {
         } else {
             setPreview(null)
         }
-
+          // eslint-disable-next-line
     }, [file])
 
     function handleChange(e) {
@@ -62,7 +68,8 @@ export default function EditPet() {
         e.preventDefault()
 
         const data = new FormData()
-        data.append('image', file) //tenes que subir si o si
+        data.append('image', file)
+        data.append('id', id)
         data.append('name', infoPet.name.toLowerCase())
         data.append('height', infoPet.height)
         data.append('weight', infoPet.weight)
@@ -70,19 +77,8 @@ export default function EditPet() {
         data.append('bio', infoPet.bio)
         data.append('dietaryRestriction', infoPet.dietaryRestriction)
         data.append('breed', infoPet.breed)
-        if (hypoallergenic === 'Yes') hypoallergenic = true
-        else hypoallergenic = false
         data.append('hypoallergenic', hypoallergenic)
         data.append('type', type)
-
-        const obj = {
-            ...infoPet,
-            type: type,
-            picture: file === undefined ? petDetail.picture : file.name,
-            hypoallergenic: hypoallergenic
-        }
-
-        console.log(obj)
 
         try {
 
@@ -94,8 +90,14 @@ export default function EditPet() {
             });
 
             setPetDetail(response.data.pet)
+
         } catch (e) {
-            console.log(e.response)
+            const { msg } = e.response.data.errors[0]
+            swal({
+                title: `${msg}`,
+                icon: "error",
+                button: "Ok",
+            });
         }
     }
 
@@ -157,7 +159,6 @@ export default function EditPet() {
                             sx={{ width: 150 }}
                         />
 
-                        {/* https://www.youtube.com/watch?v=BPUgM1Ig4Po */}
                         <TextField
                             required
                             name='height'
@@ -169,7 +170,6 @@ export default function EditPet() {
                             onChange={handleChange}
                             value={infoPet.height}
                             sx={{ width: 150 }}
-                        // error={errFirstNameSignUp}
                         />
 
                         <TextField
@@ -183,7 +183,6 @@ export default function EditPet() {
                             onChange={handleChange}
                             value={infoPet.weight}
                             sx={{ width: 150 }}
-                        // error={errFirstNameSignUp}
                         />
 
                         <TextField
@@ -196,7 +195,6 @@ export default function EditPet() {
                             onChange={handleChange}
                             value={infoPet.color}
                             sx={{ width: 150 }}
-                        // error={errFirstNameSignUp}
                         />
 
                         <TextField
@@ -209,7 +207,6 @@ export default function EditPet() {
                             onChange={handleChange}
                             value={infoPet.bio}
                             sx={{ width: 150 }}
-                        // error={errFirstNameSignUp}
                         />
 
                         <TextField
@@ -243,9 +240,7 @@ export default function EditPet() {
                             variant="standard"
                             onChange={handleChange}
                             value={infoPet.dietaryRestriction}
-                        // error={errFirstNameSignUp}
                         />
-
 
                         <TextField
                             required
@@ -258,11 +253,11 @@ export default function EditPet() {
                             onChange={handleChange}
                             value={infoPet.breed}
                             sx={{ width: 150 }}
-                        // error={errFirstNameSignUp}
                         />
                     </div>
                 </div>
-                <div className="container-btn-add">
+                <div className="pet-details-actions" align="center">
+                    <Button variant="contained" color="primary" size="small" className="btn-back" onClick={() => navigate(-2)}>Back</Button>
                     <Button type="submit" variant="contained" align="center" size="small" sx={{ background: '#6A4770' }}>Edit</Button>
                 </div>
             </Box>

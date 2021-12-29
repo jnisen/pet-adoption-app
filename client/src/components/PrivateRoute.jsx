@@ -1,26 +1,34 @@
+//React
+import { useEffect, useState } from 'react'
 import { Navigate } from 'react-router-dom'
 
-import {useEffect, useContext, useState} from 'react'
-
-import { petAdoptionContext } from '../content/petAdoptionContext';
-
+//Cookies
 import Cookies from 'js-cookie'
 
-
+//Swal
+import swal from 'sweetalert'
 
 export default function PrivateRoute({ component: Component }) {
 
     const [token, setToken] = useState('')
-    const {currentUser, setCurrentUser } = useContext(petAdoptionContext)
-    
 
     const cookie = Cookies.get('token')
 
-    useEffect(() => {
-        setToken(cookie)
-       
-    }, [currentUser])
 
-    return <>{cookie ? <Component/> : <Navigate to='/' />}</>
+    useEffect(() => {
+
+        if (!cookie) {
+            swal({
+                title: `You have to login first`,
+                icon: "error",
+                button: "Ok",
+            });
+            setToken(cookie)
+        }
+
+        // eslint-disable-next-line
+    }, [])
+
+    return <>{cookie ? <Component /> : <Navigate to='/' />}</>
 
 }

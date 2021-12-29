@@ -1,10 +1,26 @@
+import { Users, User } from '../data/usersDb'
+const users = new Users()
 const bycript = require('bcrypt')
 
-export function encryptPassword(req, res, next) {
+export async function encryptPassword(req, res, next) {
 
-    const { password } = req.body
+    const { idUser, password } = req.body
 
     const saltRounds = 10;
+
+    if (password.length === 0) {
+        console.log('abdc')
+        const user: any = await users.getUserPetsById(idUser)
+        req.body.password = user.password
+        req.body.confirmPassword = user.confirmPassword
+        next()
+    }
+
+    if (password.length === 60) {
+        req.body.password = password
+        req.body.confirmPassword = password
+        next()
+    }
 
     bycript.hash(password, saltRounds, function (err, hash) {
         if (err) {
@@ -15,6 +31,7 @@ export function encryptPassword(req, res, next) {
         req.body.confirmPassword = hash
         next()
     })
+
 
 }
 

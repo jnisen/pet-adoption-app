@@ -36,11 +36,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.getCurrentUser = exports.login = exports.updateUser = exports.getUser = exports.getAllUsers = exports.addUser = void 0;
+exports.makeAdmin = exports.getCurrentUser = exports.login = exports.updateUser = exports.getUser = exports.getAllUsers = exports.addUser = void 0;
 require('dotenv').config();
 var usersDb_1 = require("../data/usersDb");
 var users = new usersDb_1.Users();
-var admin = process.env.ADMIN.split(' ');
+var admin = process.env.ADMIN;
 function addUser(req, res) {
     return __awaiter(this, void 0, void 0, function () {
         var _a, firstName, lastName, email, password, confirmPassword, phoneNumber, user, role, e_1;
@@ -52,10 +52,10 @@ function addUser(req, res) {
                     user = new usersDb_1.User(firstName, lastName, email, password, confirmPassword, phoneNumber);
                     admin.includes(email) ? user.role = 'admin' : user.role = 'public';
                     role = admin.includes(email) ? user.role = 'admin' : user.role = 'public';
+                    user.bio = '';
                     if (role === 'public') {
                         user.savedPets = [];
                         user.adoptedFosterPets = [];
-                        user.bio = '';
                     }
                     return [4 /*yield*/, users.addUser(user)];
                 case 1:
@@ -102,7 +102,7 @@ function getUser(req, res) {
                 case 0:
                     _a.trys.push([0, 2, , 3]);
                     id = req.params.id;
-                    return [4 /*yield*/, users.getUserById(id)];
+                    return [4 /*yield*/, users.getUserPetsById(id)];
                 case 1:
                     user = _a.sent();
                     res.send(user);
@@ -132,7 +132,7 @@ function updateUser(req, res) {
                     return [3 /*break*/, 3];
                 case 2:
                     e_4 = _a.sent();
-                    res.status(404).send("" + e_4);
+                    res.status(404).send(e_4);
                     return [3 /*break*/, 3];
                 case 3: return [2 /*return*/];
             }
@@ -172,18 +172,59 @@ function login(req, res) {
 exports.login = login;
 function getCurrentUser(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var userID, findUser;
+        var userID, findUser, e_6;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
+                    _a.trys.push([0, 2, , 3]);
                     userID = req.user.userID;
                     return [4 /*yield*/, users.getUser(userID)];
                 case 1:
                     findUser = _a.sent();
                     res.send(findUser);
-                    return [2 /*return*/];
+                    return [3 /*break*/, 3];
+                case 2:
+                    e_6 = _a.sent();
+                    console.log(e_6);
+                    res.status(400).send(e_6);
+                    return [3 /*break*/, 3];
+                case 3: return [2 /*return*/];
             }
         });
     });
 }
 exports.getCurrentUser = getCurrentUser;
+function makeAdmin(req, res) {
+    return __awaiter(this, void 0, void 0, function () {
+        var id, findUser, allUsers, e_7;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 5, , 6]);
+                    id = req.params.id;
+                    return [4 /*yield*/, users.getUserByID(id)];
+                case 1:
+                    findUser = _a.sent();
+                    findUser.role = 'admin';
+                    return [4 /*yield*/, users.updateUser(id, findUser)];
+                case 2:
+                    _a.sent();
+                    return [4 /*yield*/, users.userToAdmin(id)];
+                case 3:
+                    _a.sent();
+                    return [4 /*yield*/, users.readUsers()];
+                case 4:
+                    allUsers = _a.sent();
+                    res.send(allUsers);
+                    return [3 /*break*/, 6];
+                case 5:
+                    e_7 = _a.sent();
+                    console.log(e_7);
+                    res.status(404).send(e_7);
+                    return [3 /*break*/, 6];
+                case 6: return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.makeAdmin = makeAdmin;

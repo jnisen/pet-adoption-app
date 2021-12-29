@@ -1,7 +1,11 @@
+//React
 import { useContext } from 'react'
 import { petAdoptionContext } from '../content/petAdoptionContext';
 
+//Component
 import Pet from './Pet'
+
+//Material UI
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 

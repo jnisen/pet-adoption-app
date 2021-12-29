@@ -1,14 +1,12 @@
 const express = require('express')
-const dotenv = require("dotenv");
-dotenv.config();
+
 const cors = require('cors')
 const app = express()
 const cookieparser = require('cookie-parser')
 
-import {connectDB} from './config/mongodb'
-const port = process.env.PORT || 8000
 
-connectDB();
+
+
 
 const usersRoute = require('./routes/usersRoute')
 const petsRoute = require('./routes/petsRoute')
@@ -26,4 +24,4 @@ app.use('/users', usersRoute)
 app.use('/pets', petsRoute)
 
 
-app.listen(port, () => { console.log(`Listening on port: ${port}`) })
+module.exports = app
