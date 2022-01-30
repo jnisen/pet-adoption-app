@@ -154,6 +154,7 @@ export default function Signup() {
                         label="First Name"
                         type="text"
                         size="medium"
+                        data-cy = 'first-name-signup'
                         onChange={handleChange}
                         value={signUp.firstName}
                         error={errFirstNameSignUp}
@@ -167,6 +168,7 @@ export default function Signup() {
                         label="Last Name"
                         type="text"
                         size="medium"
+                        data-cy = 'last-name-signup'
                         onChange={handleChange}
                         value={signUp.lastName}
                         error={errLastNameSignUp}
@@ -180,6 +182,7 @@ export default function Signup() {
                         label="E-mail"
                         type="email"
                         size="medium"
+                        data-cy = 'email-signup'
                         onChange={handleChange}
                         error={errEmailSignUp}
                         value={signUp.email}
@@ -192,6 +195,7 @@ export default function Signup() {
                         name='phoneNumber'
                         onChange={handleOnChange}
                         variant="outlined"
+                        data-cy = 'phone-signup'
                         error={errPhoneNumber}
                         value={phone.phoneNumber}
                         required
@@ -205,6 +209,7 @@ export default function Signup() {
                         name='password'
                         type="password"
                         size="medium"
+                        data-cy = 'password-signup'
                         required
                         onChange={handleChange}
                         error={errPassSignUp}
@@ -220,6 +225,7 @@ export default function Signup() {
                         name='confirmPassword'
                         type="password"
                         size="medium"
+                        data-cy = 'confirm-password-signup'
                         required
                         onChange={handleChange}
                         error={errConfirmPassSignUp}
@@ -231,12 +237,12 @@ export default function Signup() {
             <small align="center">(*) Password must contain at least one upper case, one lower case, one digit and at least 6 characters long</small>
             <div className="form-signup">
                 <div className="form-login-action">
-                    <Button type="submit" color="secondary" variant="contained" size="small" sx={{ m: 1 }}>Sign Up</Button>
+                    <Button type="submit" color="secondary" variant="contained" size="small" sx={{ m: 1 }} data-cy = "signup-button">Sign Up</Button>
                     <Button type="submit" color="secondary" variant="contained" size="small" onClick={() => setSignUpModal(!signUpModal)}>Cancel</Button>
                 </div>
             </div>
             <Typography align="center">
-                Already have an account? <Button size="small" variant="text" onClick={handleLogin} >Login</Button>
+                Already have an account? <Button size="small" variant="text" onClick={handleLogin} data-cy = 'login-signup-navbar' >Login</Button>
             </Typography>
         </Box>
     )

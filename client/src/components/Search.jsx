@@ -103,7 +103,7 @@ export default function Search() {
                 <Typography variant="h5" align="center" sx={{ m: 2 }}>Search Pet</Typography>
                 <Stack direction="row" spacing={1} alignItems="center">
                     <Typography>Basic</Typography>
-                    <AntSwitch checked={hidden} onChange={handleHiddenChange} inputProps={{ 'aria-label': 'ant design' }} />
+                    <AntSwitch data-cy = 'toggle-search' checked={hidden} onChange={handleHiddenChange} inputProps={{ 'aria-label': 'ant design' }} />
                     <Typography>Advance</Typography>
                 </Stack>
             </div>
@@ -113,6 +113,7 @@ export default function Search() {
                         variant="standard"
                         size="small"
                         label="Type"
+                        data-cy = 'type-search'
                         sx={{ width: 300 }}
                         select
                         value={type}
@@ -125,6 +126,7 @@ export default function Search() {
                             <MenuItem
                                 key={pet}
                                 value={pet}
+                            
                             >
                                 {pet}
                             </MenuItem>))}
@@ -137,6 +139,7 @@ export default function Search() {
                                 label="Adopted Status"
                                 sx={{ width: 300 }}
                                 select
+                                data-cy = 'status-search'
                                 value={statusAdoption}
                                 onChange={(e) => setStatusAdoption(e.target.value)}
                             >
@@ -156,6 +159,7 @@ export default function Search() {
                                 label="Name"
                                 type="text"
                                 size="small"
+                                data-cy = 'name-search'
                                 variant="standard"
                                 sx={{ width: 300 }}
                                 onChange={handleChange}
@@ -207,7 +211,7 @@ export default function Search() {
                                 />
                             </div> </> : null}
                     <div className="form-search-btn">
-                        <Button type="submit" variant="outlined">Search</Button>
+                        <Button type="submit" variant="outlined" data-cy = 'search-button'>Search</Button>
                     </div>
                 </div>
             </Box>
@@ -232,14 +236,14 @@ export default function Search() {
                         <Box sx={{ width: '100%', mt: 2 }}>
                             <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
                                 {petCritera.map((pet, index) =>
-                                    <Grid item xs={2} sm={4} md={4} key={index} align="center">
+                                    <Grid item xs={2} sm={4} md={4}  data-cy = 'grid-search' key={index} align="center">
                                         <Pet key={pet._id} pet={pet} />
                                     </Grid>
                                 )}
                             </Grid>
                         </Box>
                         :
-                        <p align="center">No Pets Founded</p>)
+                        <p align="center" data-cy= 'p-search'>No Pets Founded</p>)
                 )
                 : null}
         </>

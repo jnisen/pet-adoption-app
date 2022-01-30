@@ -66,6 +66,7 @@ export default function Navbar() {
                                 aria-label="menu"
                                 sx={{ mr: 2, color: '#6A4770' }}
                                 onClick={handleClick}
+                                data-cy = 'icon-button'
                             >
                                 <MenuIcon />
                             </IconButton>
@@ -79,7 +80,7 @@ export default function Navbar() {
                                 }}
                             >
                                 <MenuItem onClick={handleClose} component={NavLink} to={'/home'} style={{ textDecoration: 'none' }} > <HomeIcon />Pet Page</MenuItem>
-                                <MenuItem onClick={handleClose} component={NavLink} to={'/search'} style={{ textDecoration: 'none' }}><SearchIcon /> Search</MenuItem>
+                                <MenuItem onClick={handleClose} data-cy = 'search-button' component={NavLink} to={'/search'} style={{ textDecoration: 'none' }}><SearchIcon /> Search</MenuItem>
 
                                 {currentUser ?
                                     <div>
@@ -115,7 +116,7 @@ export default function Navbar() {
                             </div>
                             :
                             <>
-                                <Button color="inherit" sx={{ background: '#6A4770', mr: 2 }} onClick={() => setLoginModal(!loginModal)}>Login</Button>
+                                <Button color="inherit" data-cy = 'login-navbar' sx={{ background: '#6A4770', mr: 2 }} onClick={() => setLoginModal(!loginModal)}>Login</Button>
                                 <Modal
                                     isOpen={loginModal}
                                     onRequestClose={() => setLoginModal(!loginModal)}
@@ -123,7 +124,7 @@ export default function Navbar() {
                                 >
                                     <Login />
                                 </Modal>
-                                <Button color="inherit" sx={{ background: '#6A4770' }} style={{ padding: '5px 1.5px' }} onClick={() => setSignUpModal(!signUpModal)}>Sign Up</Button>
+                                <Button color="inherit" data-cy = 'signup-navbar' sx={{ background: '#6A4770' }} style={{ padding: '5px 1.5px' }} onClick={() => setSignUpModal(!signUpModal)}>Sign Up</Button>
                                 <Modal
                                     isOpen={signUpModal}
                                     onRequestClose={() => setSignUpModal(!signUpModal)}

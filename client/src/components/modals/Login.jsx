@@ -91,7 +91,7 @@ export default function Login() {
             onSubmit={handleLogin}
         >
             <div className="form-login">
-                <Typography>Login</Typography>
+                <Typography data-cy = 'login-title'>Login</Typography>
                 <TextField
                     required
                     id="outlined-required"
@@ -99,6 +99,7 @@ export default function Login() {
                     label="E-mail"
                     type="email"
                     size="small"
+                    data-cy = 'email-login'
                     onChange={handleChange}
                     error={errEmailLogin}
                     helperText="Enter an email"
@@ -108,6 +109,7 @@ export default function Login() {
                     label="Password"
                     name='password'
                     type="password"
+                    data-cy = 'password-login'
                     size="small"
                     required
                     onChange={handleChange}
@@ -115,7 +117,7 @@ export default function Login() {
                     helperText="Enter a password"
                 />
                 <div className="form-login-action">
-                    <Button type="submit" color="secondary" variant="contained" size="small" sx={{ m: 1 }}>Login</Button>
+                    <Button type="submit" color="secondary" variant="contained" data-cy = 'login-button' size="small" sx={{ m: 1 }}>Login</Button>
                     <Button type="submit" color="secondary" variant="contained" size="small" onClick={() => setLoginModal(!loginModal)}>Cancel</Button>
                 </div>
             </div>
